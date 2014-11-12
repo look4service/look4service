@@ -2,10 +2,8 @@ package com.bensoft.look4service;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -14,8 +12,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
+import android.util.Log;
 
 
 import java.util.List;
@@ -64,16 +61,39 @@ public class SettingsActivity extends PreferenceActivity {
         // Add 'general' preferences.
         addPreferencesFromResource(R.xml.pref_general);
 
-        // Add 'notifications' preferences, and a corresponding header.
-        //PreferenceCategory fakeHeader = new PreferenceCategory(this);
-        //fakeHeader.setTitle(R.string.pref_header_notifications);
-        //getPreferenceScreen().addPreference(fakeHeader);
-        //addPreferencesFromResource(R.xml.pref_notification);
+        // Add 'about' preferences, and a corresponding header.
+        PreferenceCategory fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle(R.string.pref_header_about);
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_about);
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
         // their values. When their values change, their summaries are updated
         // to reflect the new value, per the Android Design guidelines.
         bindPreferenceSummaryToValue(findPreference("username"));
+
+        // set contact developer
+        Preference prefEmail = findPreference("contact");
+        prefEmail.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getResources().getString(R.string.pref_email)});
+                intent.setType("message/rfc822");
+                startActivity(Intent.createChooser(intent, getString(R.string.pref_email_title).toString()));
+                return true;
+            }
+        });
+
+        // set version
+        Preference prefVersion = findPreference("version");
+        String version = "";
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        prefVersion.setSummary(version);
     }
 
     /**
@@ -138,28 +158,6 @@ public class SettingsActivity extends PreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
-            } else if (preference instanceof RingtonePreference) {
-                // For ringtone preferences, look up the correct display value
-                // using RingtoneManager.
-                if (TextUtils.isEmpty(stringValue)) {
-                    // Empty values correspond to 'silent' (no ringtone).
-                    preference.setSummary(R.string.pref_ringtone_silent);
-
-                } else {
-                    Ringtone ringtone = RingtoneManager.getRingtone(
-                            preference.getContext(), Uri.parse(stringValue));
-
-                    if (ringtone == null) {
-                        // Clear the summary if there was a lookup error.
-                        preference.setSummary(null);
-                    } else {
-                        // Set the summary to reflect the new ringtone display
-                        // name.
-                        String name = ringtone.getTitle(preference.getContext());
-                        preference.setSummary(name);
-                    }
-                }
-
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
@@ -205,9 +203,50 @@ public class SettingsActivity extends PreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"));
-            bindPreferenceSummaryToValue(findPreference("example_list"));
+            bindPreferenceSummaryToValue(findPreference("username"));
         }
     }
 
+    /**
+     * This fragment shows notification preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class AboutPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_about);
+
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+            //bindPreferenceSummaryToValue(findPreference("contact"));
+
+            // set contact developer
+            Preference prefEmail = findPreference("contact");
+            prefEmail.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getResources().getString(R.string.pref_email)});
+                    intent.setType("message/rfc822");
+                    startActivity(Intent.createChooser(intent, getString(R.string.pref_email_title).toString()));
+                    return true;
+                }
+            });
+
+            // set version
+            Preference prefVersion = findPreference("version");
+            String version = "";
+            try {
+                version = getActivity().getPackageManager().getPackageInfo(
+                        getActivity().getPackageName(), 0).versionName;
+            } catch(Exception ex) {
+                Log.d("DEBUG", ex.getMessage());
+            }
+            prefVersion.setSummary(version);
+        }
+    }
 }

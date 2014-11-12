@@ -5,4 +5,7 @@
     <header android:fragment="com.bensoft.look4service.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
+    <header android:fragment="com.bensoft.look4service.SettingsActivity$AboutPreferenceFragment"
+        android:title="@string/pref_header_about" />
+
 </preference-headers>
