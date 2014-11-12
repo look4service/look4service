@@ -5,9 +5,8 @@
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
-
-    <string name="pref_title_display_name">Login</string>
-    <string name="pref_default_display_name"></string>
+    <string name="pref_login">Login</string>
+    <string name="pref_password">Password</string>
 
     <!-- About settings -->
     <string name="pref_header_about">About</string>

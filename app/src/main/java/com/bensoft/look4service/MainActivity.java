@@ -3,6 +3,8 @@ package com.bensoft.look4service;
 import java.util.Locale;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -20,7 +22,8 @@ import android.view.ViewGroup;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
-    private static final int RESULT_SETTINGS = 1;
+    private static final int RESULT_LOGIN = 1;
+    private static final int RESULT_SETTINGS = 2;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -37,10 +40,38 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     ViewPager mViewPager;
 
+    /**
+     * Determine whether it is first time launch the app.
+     * @return
+     */
+    private boolean isFirstTime() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String username = sharedPreferences.getString("username", "");
+        String password = sharedPreferences.getString("password", "");
+        return username.isEmpty() && password.isEmpty();
+    }
+
+    /**
+     * TODO: Return true if login success at server otherwise false.
+     * @return
+     */
+    private boolean isLoginSuccess() {
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // show login at first time
+        if(isFirstTime()) {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivityForResult(i, RESULT_LOGIN);
+        } else if(!isLoginSuccess()) {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivityForResult(i, RESULT_LOGIN);
+        }
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -76,7 +107,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
