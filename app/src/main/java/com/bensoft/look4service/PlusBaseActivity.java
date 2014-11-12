@@ -2,7 +2,9 @@ package com.bensoft.look4service;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 
 import android.util.Log;
@@ -241,6 +243,15 @@ public abstract class PlusBaseActivity extends ActionBarActivity
         updateConnectButtonState();
         setProgressBarVisible(false);
         onPlusClientSignIn();
+
+        // set username and password under setting. Will be use for next app launching
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", mPlusClient.getAccountName());
+        //editor.putString("password", mPassword);
+        editor.commit();
+
+        finish();
     }
 
     /**
