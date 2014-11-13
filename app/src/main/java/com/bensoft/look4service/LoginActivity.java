@@ -7,6 +7,7 @@ import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -29,14 +30,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.FacebookException;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
+import com.facebook.model.GraphObject;
+import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -96,15 +103,16 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             return;
         }
 
-        // setup facebook sign in
-        facebookButton = (LoginButton)findViewById(R.id.facebook_sign_in_button);
-        facebookButton.setOnClickListener(new OnClickListener() {
+        // setup facebook
+        facebookButton = (LoginButton) findViewById(R.id.facebook_sign_in_button);
+        facebookButton.setOnErrorListener(new LoginButton.OnErrorListener() {
             @Override
-            public void onClick(View v) {
-
+            public void onError(FacebookException error) {
+                Log.i(TAG, "Error: " + error.getMessage());
             }
         });
-
+        facebookButton.setReadPermissions(Arrays.asList("public_profile"));
+        facebookButton.setSessionStatusCallback(facebookCallBack);
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -134,6 +142,14 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         mProgressView = findViewById(R.id.login_progress);
         mEmailLoginFormView = findViewById(R.id.email_login_form);
         mSignOutButtons = findViewById(R.id.plus_sign_out_buttons);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
+        super.onActivityResult(requestCode, responseCode, intent);
+        if(Session.getActiveSession() != null) {
+            Session.getActiveSession().onActivityResult(this, requestCode, responseCode, intent);
+        }
     }
 
     private void populateAutoComplete() {
@@ -244,6 +260,33 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
+    /**
+     * Callback from facebook sdk.
+     * See http://www.kpbird.com/2013/03/android-login-using-facebook-sdk-30.html
+     */
+    private Session.StatusCallback facebookCallBack = new Session.StatusCallback() {
+        @Override
+        public void call(Session session, SessionState state, Exception exception) {
+            if (session.isOpened()) {
+                Log.i(TAG, "Access token " + session.getAccessToken());
+                Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+                        if (user != null) {
+                            Log.i(TAG, "User Id: " + user.getId());
+                            GraphObject graphObject = response.getGraphObject();
+                            // TODO: Register user id to server. Facebook user id is a long integer ie. 12345678901234567
+                            Helper.storeCredential(getApplicationContext(), user.getId(), "");
+                            finish();
+                        } else {
+                            Log.i(TAG, "Email: " + user.asMap().get("email"));
+                        }
+                    }
+                });
+            }
+        }
+    };
 
     @Override
     protected void onPlusClientSignIn() {
@@ -427,14 +470,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             showProgress(false);
 
             if (success) {
-
                 // set username and password under setting. Will be use for next app launching
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("username", mEmail);
-                editor.putString("password", mPassword);
-                editor.commit();
-
+                Helper.storeCredential(getApplicationContext(), mEmail, mPassword);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -449,6 +486,3 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         }
     }
 }
-
-
-

@@ -10,9 +10,12 @@ Theme
 
 Generate Hash Key for Facebook use
 --------------------------------------
+Copy %HOMEPATH%\\.android\debug.keystore to Android folder. After the command it will prompt password (android) to continue.
+
 ```
-$ ./keytool.exe -exportcert -alias androiddebugkey -keystore %HOMEPATH%\.androi
-d\debug.keystore | openssl sha1 -binary | openssl base64
+$cd /c/Program Files/Java/jdk1.7.0_25/bin
+$ ./keytool.exe -exportcert -alias androiddebugkey -keystore "C:\Program Files
+(x86)\Android\debug.keystore" | openssl sha1 -binary | openssl base64
 ```
 
 Reference

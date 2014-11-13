@@ -245,12 +245,7 @@ public abstract class PlusBaseActivity extends ActionBarActivity
         onPlusClientSignIn();
 
         // set username and password under setting. Will be use for next app launching
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("username", mPlusClient.getAccountName());
-        //editor.putString("password", mPassword);
-        editor.commit();
-
+        Helper.storeCredential(getApplicationContext(),mPlusClient.getAccountName(),"");
         finish();
     }
 
