@@ -111,7 +111,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 Log.i(TAG, "Error: " + error.getMessage());
             }
         });
-        facebookButton.setReadPermissions(Arrays.asList("public_profile"));
+        facebookButton.setReadPermissions(Arrays.asList("public_profile", "email"));
         facebookButton.setSessionStatusCallback(facebookCallBack);
 
         // Set up the login form.
@@ -274,10 +274,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                     @Override
                     public void onCompleted(GraphUser user, Response response) {
                         if (user != null) {
-                            Log.i(TAG, "User Id: " + user.getId());
+                            Log.i(TAG, "User Id: " + user.getId()); // Facebook user id is a long integer ie. 12345678901234567
+                            Log.i(TAG, "User email: " + user.getProperty("email").toString()); //user.getUsername());
                             GraphObject graphObject = response.getGraphObject();
-                            // TODO: Register user id to server. Facebook user id is a long integer ie. 12345678901234567
-                            Helper.storeCredential(getApplicationContext(), user.getId(), "");
+                            // TODO: Register facebook user to server.
+                            Helper.storeCredential(getApplicationContext(), user.getProperty("email").toString(), "");
                             finish();
                         } else {
                             Log.i(TAG, "Email: " + user.asMap().get("email"));
