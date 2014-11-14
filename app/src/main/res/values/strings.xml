@@ -13,5 +13,6 @@
     <string name="action_exit">Exit</string>
 
     <string name="facebook_app_id">1495293250738205</string>
+    <string name="welcome">Welcome to Look4Service!</string>
 
 </resources>
