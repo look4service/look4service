@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +43,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     /**
      * Determine whether it is first time launch the app.
+     *
      * @return
      */
     private boolean isFirstTime() {
@@ -53,6 +55,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     /**
      * TODO: Return true if login success at server otherwise false.
+     *
      * @return
      */
     private boolean isLoginSuccess() {
@@ -65,10 +68,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         setContentView(R.layout.activity_main);
 
         // show login at first time
-        if(isFirstTime()) {
+        if (isFirstTime()) {
             Intent i = new Intent(this, LoginActivity.class);
             startActivityForResult(i, RESULT_LOGIN);
-        } else if(!isLoginSuccess()) {
+        } else if (!isLoginSuccess()) {
             Intent i = new Intent(this, LoginActivity.class);
             startActivityForResult(i, RESULT_LOGIN);
         }
@@ -122,12 +125,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_exit:
-                finish();
-            return true;
             case R.id.action_settings:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivityForResult(i, RESULT_SETTINGS);
+                return true;
+            case R.id.action_exit:
+                finish();
                 return true;
             default:
                 break;
@@ -165,13 +168,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            // TODO: Change fragment dynamically based on section number
             return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 4 total pages.
+            return 4;
         }
 
         @Override
@@ -184,6 +188,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return getString(R.string.title_section2).toUpperCase(l);
                 case 2:
                     return getString(R.string.title_section3).toUpperCase(l);
+                case 3:
+                    return getString(R.string.title_section4).toUpperCase(l);
             }
             return null;
         }
@@ -193,6 +199,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -215,8 +222,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
