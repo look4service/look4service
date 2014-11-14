@@ -4,6 +4,14 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_contact">Mobile</string>
+    <string name="prompt_company">Company name (Optional)</string>
+    <string name="prompt_street1">Street1</string>
+    <string name="prompt_street2">Street2</string>
+    <string name="prompt_city">City</string>
+    <string name="prompt_postal">Postal</string>
+    <string name="prompt_state">State</string>
+    <string name="prompt_country">Country</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="plus_sign_out">Switch Google+ account</string>

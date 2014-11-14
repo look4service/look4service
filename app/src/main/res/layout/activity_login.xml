@@ -22,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/welcome"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/textView2"
         android:layout_marginBottom="16dp" />
 
@@ -32,6 +33,12 @@
 
             <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="vertical">
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/is_vendor"
+                    android:id="@+id/checkBox" />
 
                 <AutoCompleteTextView android:id="@+id/email" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_email"
@@ -44,6 +51,51 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified" android:inputType="textPassword"
                     android:maxLines="1" android:singleLine="true" />
+
+                <LinearLayout android:id="@+id/vendor_form" android:orientation="vertical"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <EditText android:id="@+id/contact" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:hint="@string/prompt_contact"
+                        android:maxLines="1" android:singleLine="true" />
+
+                    <EditText android:id="@+id/company" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:hint="@string/prompt_company"
+                        android:maxLines="1" android:singleLine="true" />
+
+                    <EditText android:id="@+id/street1" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:hint="@string/prompt_street1"
+                        android:maxLines="1" android:singleLine="true" />
+
+                    <EditText android:id="@+id/street2" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:hint="@string/prompt_street2"
+                        android:maxLines="1" android:singleLine="true" />
+
+                    <LinearLayout android:orientation="horizontal"
+                        android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+                        <EditText android:id="@+id/city" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:hint="@string/prompt_city"
+                            android:maxLines="1" android:singleLine="true" />
+
+                        <EditText android:id="@+id/postal" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:hint="@string/prompt_postal"
+                            android:maxLines="1" android:singleLine="true" />
+                    </LinearLayout>
+
+                    <LinearLayout android:orientation="horizontal"
+                        android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+                        <EditText android:id="@+id/state" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:hint="@string/prompt_state"
+                            android:maxLines="1" android:singleLine="true" />
+
+                        <EditText android:id="@+id/country" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:hint="@string/prompt_country"
+                            android:maxLines="1" android:singleLine="true" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
